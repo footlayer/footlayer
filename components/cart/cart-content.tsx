@@ -404,7 +404,7 @@ export function CartContent() {
           </div>
 
           <div className="mt-6 text-center text-xs text-gray-500">
-            <p>💰 Cash on Delivery Available</p>
+            <p>💰 Cash on Delivery Available here</p>
             <p>🚚 Free delivery within Lahore, Pakistan</p>
             <p>🔄 Easy returns within 7 days</p>
           </div>
