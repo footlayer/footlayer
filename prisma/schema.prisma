@@ -1,0 +1,146 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  imageUrl    String
+  images      String[] @default([])
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  sizes       String[] // Available sizes like ["39", "40", "41", "42"]
+  colors      String[] // Available colors like ["Brown", "Black", "Tan"]
+  inStock     Boolean  @default(true)
+  featured    Boolean  @default(false)
+  // Discount fields
+  discountPercentage Float? // Percentage discount (0-100)
+  discountAmount     Float? // Fixed amount discount
+  discountStartDate  DateTime?
+  discountEndDate    DateTime?
+  isDiscounted       Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  inventoryItems InventoryItem[]
+  
+  @@map("products")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String
+  address   String
+  city      String
+  createdAt DateTime @default(now())
+  
+  orders    Order[]
+  cartItems CartItem[]
+  
+  @@map("customers")
+}
+
+model CartItem {
+  id         String   @id @default(cuid())
+  productId  String
+  customerId String
+  quantity   Int      @default(1)
+  size       String
+  color      String
+  createdAt  DateTime @default(now())
+  
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, customerId, size, color])
+  @@map("cart_items")
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  customerId  String
+  orderNumber String      @unique
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  paymentMethod String    @default("Cash on Delivery")
+  deliveryAddress String
+  deliveryCity    String
+  customerPhone   String
+  customerName    String
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  customer    Customer    @relation(fields: [customerId], references: [id])
+  orderItems  OrderItem[]
+  
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  size      String
+  color     String
+  price     Float  // Original price at time of order
+  discountAmount Float @default(0) // Discount applied to this item
+  discountedPrice Float // Final price after discount
+  
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@map("order_items")
+}
+
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+  PAYMENT_PENDING
+  PAYMENT_FAILED
+  REFUNDED
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  products  Product[]
+
+  @@map("categories")
+}
+
+model InventoryItem {
+  id        String   @id @default(cuid())
+  productId String
+  size      String
+  color     String
+  quantity  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, size, color])
+  @@map("inventory_items")
+}
