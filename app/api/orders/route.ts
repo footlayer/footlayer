@@ -1,8 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../../../lib/db';
+import { prisma, PrismaTransactionClient } from '../../../lib/db';
 import { syncMultipleProductsStockStatus } from '../../../lib/inventory-sync';
-import { Prisma } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,7 +106,7 @@ export async function POST(request: NextRequest) {
     const uniqueProductIds = [...new Set(items.map((item: any) => item.productId))] as string[];
 
     // Use transaction to ensure atomicity
-    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const order = await prisma.$transaction(async (tx: PrismaTransactionClient) => {
       // Update inventory items
       for (const update of inventoryUpdates) {
         await (tx as any).inventoryItem.update({

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { prisma } from '../../../../../lib/db';
-import { Prisma } from '@prisma/client';
+import { prisma, PrismaTransactionClient } from '../../../../../lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,7 +85,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     let updatedOrder;
     if (status === 'RETURNED' && existingOrder.status !== 'RETURNED') {
       // Use transaction to restore inventory and update status
-      updatedOrder = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      updatedOrder = await prisma.$transaction(async (tx: PrismaTransactionClient) => {
         // Restore inventory for each order item
         for (const orderItem of existingOrder.orderItems) {
           const inventoryItem = await (tx as any).inventoryItem.findUnique({
@@ -207,7 +206,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     // Only restore inventory if order was not already cancelled
     if (order.status !== 'CANCELLED') {
       // Use transaction to ensure atomicity
-      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      await prisma.$transaction(async (tx: PrismaTransactionClient) => {
         // Restore inventory for each order item
         for (const orderItem of order.orderItems) {
           const inventoryItem = await (tx as any).inventoryItem.findUnique({
