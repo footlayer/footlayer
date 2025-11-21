@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Create a response object with product stock status
-    const stockStatus = products.reduce((acc, product) => {
+    const stockStatus = products.reduce((acc: Record<string, { id: string; name: string; inStock: boolean; inventory: null }>, product: { id: string; name: string; inStock: boolean }) => {
       acc[product.id] = {
         id: product.id,
         name: product.name,

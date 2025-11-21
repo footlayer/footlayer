@@ -4,6 +4,7 @@ import { ProductCard } from '../products/product-card';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
+import type { Product } from '@prisma/client';
 
 export async function FeaturedProducts() {
   const featuredProducts = await prisma.product.findMany({
@@ -30,7 +31,7 @@ export async function FeaturedProducts() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {featuredProducts.map((product, index) => (
+          {featuredProducts.map((product: Product, index: number) => (
             <ProductCard 
               key={product.id} 
               product={product} 

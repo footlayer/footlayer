@@ -194,7 +194,7 @@ export function ProductCard({ product, delay = 0 }: ProductCardProps) {
                 )}
               </div>
               <div className="flex flex-wrap gap-1">
-                {product.colors.slice(0, 3).map((color, index) => (
+                {product.colors.slice(0, 3).map((color: string, index: number) => (
                   <div
                     key={index}
                     className="w-4 h-4 rounded-full border border-gray-300 bg-gradient-to-br from-amber-100 to-amber-200"

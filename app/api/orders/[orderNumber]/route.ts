@@ -41,7 +41,7 @@ export async function GET(
         status: order.status,
         createdAt: order.createdAt.toISOString(),
         notes: order.notes,
-        orderItems: order.orderItems.map(item => ({
+        orderItems: order.orderItems.map((item: { id: string; productId: string; quantity: number; size: string; color: string; price: number; discountAmount: number | null; discountedPrice: number; product: { id: string; name: string; imageUrl: string | null } }) => ({
           id: item.id,
           productId: item.productId,
           quantity: item.quantity,

@@ -377,7 +377,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           <div>
             <h3 className="text-sm font-medium text-gray-900 mb-3">Size</h3>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map((size) => {
+              {product.sizes.map((size: string) => {
                 const sizeInStock = stockData ? getAvailableColors(size).length > 0 : true;
                 const isDisabled = !sizeInStock;
                 
@@ -408,7 +408,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           <div>
             <h3 className="text-sm font-medium text-gray-900 mb-3">Color</h3>
             <div className="flex flex-wrap gap-2">
-              {product.colors.map((color) => {
+              {product.colors.map((color: string) => {
                 const colorInStock = stockData ? isVariantInStock(selectedSize, color) : true;
                 const isDisabled = !colorInStock;
                 

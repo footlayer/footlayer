@@ -44,7 +44,7 @@ export async function GET(
     // If specific size and color are requested, check that variant
     if (size && color) {
       const variant = product.inventoryItems.find(
-        item => item.size === size && item.color === color
+        (item: { size: string; color: string; quantity: number }) => item.size === size && item.color === color
       );
 
       return NextResponse.json({

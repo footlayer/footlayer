@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/db';
-import { Category } from '@prisma/client';
+import type { Category, Product } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -124,29 +124,28 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Debug: Check for products without categories or with invalid dates
-    const productsWithoutCategory = products.filter(p => !p.category);
+    const productsWithoutCategory = products.filter((p: Product & { category: Category | null }) => !p.category);
     if (productsWithoutCategory.length > 0) {
       console.warn(`Found ${productsWithoutCategory.length} products without categories:`, 
-        productsWithoutCategory.map(p => ({ id: p.id, name: p.name, categoryId: p.categoryId }))
+        productsWithoutCategory.map((p: Product & { category: Category | null }) => ({ id: p.id, name: p.name, categoryId: p.categoryId }))
       );
     }
 
     // Debug: Check for invalid dates
-    const productsWithInvalidDates = products.filter(p => 
+    const productsWithInvalidDates = products.filter((p: Product & { category: Category | null }) => 
       !p.createdAt || !p.updatedAt || 
-      (p.category && (!p.category.createdAt || !(p.category as any).updatedAt))
+      (p.category && !p.category.createdAt)
     );
     if (productsWithInvalidDates.length > 0) {
       console.warn(`Found ${productsWithInvalidDates.length} products with invalid dates:`, 
-        productsWithInvalidDates.map(p => ({ 
+        productsWithInvalidDates.map((p: Product & { category: Category | null }) => ({ 
           id: p.id, 
           name: p.name, 
           createdAt: p.createdAt, 
           updatedAt: p.updatedAt,
           category: p.category ? {
             id: p.category.id,
-            createdAt: p.category.createdAt,
-            updatedAt: (p.category as any).updatedAt
+            createdAt: p.category.createdAt
           } : null
         }))
       );
@@ -155,7 +154,7 @@ export async function GET(request: NextRequest) {
     const totalPages = Math.ceil(total / limit);
 
     // Serialize the products to ensure proper JSON formatting
-    const serializedProducts = products.map(product => {
+    const serializedProducts = products.map((product: Product & { category: Category | null }) => {
       const serializedProduct = {
         ...product,
         createdAt: product.createdAt?.toISOString() || new Date().toISOString(),
@@ -169,8 +168,7 @@ export async function GET(request: NextRequest) {
       if (product.category) {
         serializedProduct.category = {
           ...product.category,
-          createdAt: product.category.createdAt?.toISOString() || new Date().toISOString(),
-          updatedAt: (product.category as any).updatedAt?.toISOString() || new Date().toISOString()
+          createdAt: product.category.createdAt?.toISOString() || new Date().toISOString()
         };
       }
 

@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       const allProducts = await prisma.product.findMany({
         select: { id: true }
       });
-      productsToSync = allProducts.map(p => p.id);
+      productsToSync = allProducts.map((p: { id: string }) => p.id);
     }
 
     if (productsToSync.length === 0) {
