@@ -1,7 +1,7 @@
 
-import { Product, OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 
-// Category type definition (not exported from @prisma/client)
+// Type definitions (not exported from @prisma/client)
 export type Category = {
   id: string;
   name: string;
@@ -9,7 +9,28 @@ export type Category = {
   createdAt: Date;
 };
 
-export type { Product, OrderStatus } from '@prisma/client';
+export type Product = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  images: string[];
+  categoryId: string;
+  sizes: string[];
+  colors: string[];
+  inStock: boolean;
+  featured: boolean;
+  discountPercentage: number | null;
+  discountAmount: number | null;
+  discountStartDate: Date | null;
+  discountEndDate: Date | null;
+  isDiscounted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type { OrderStatus } from '@prisma/client';
 
 export interface CartItem {
   id: string;
