@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/db';
-import type { Category, Product } from '@prisma/client';
+import type { Product } from '@prisma/client';
+
+// Infer Category type from Prisma query
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: Date;
+};
 
 export const dynamic = 'force-dynamic';
 

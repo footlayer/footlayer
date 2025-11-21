@@ -1,7 +1,15 @@
 
-import { Product, Category, OrderStatus } from '@prisma/client';
+import { Product, OrderStatus } from '@prisma/client';
 
-export type { Product, Category, OrderStatus } from '@prisma/client';
+// Category type definition (not exported from @prisma/client)
+export type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: Date;
+};
+
+export type { Product, OrderStatus } from '@prisma/client';
 
 export interface CartItem {
   id: string;
