@@ -4,7 +4,7 @@ import { ProductCard } from '../products/product-card';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import type { Product } from '@prisma/client';
+import type { Product } from '../../lib/types';
 
 export async function FeaturedProducts() {
   const featuredProducts = await prisma.product.findMany({

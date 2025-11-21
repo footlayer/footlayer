@@ -1,4 +1,4 @@
-import { Product } from '@prisma/client';
+import type { Product } from './types';
 
 export interface DiscountInfo {
   originalPrice: number;
